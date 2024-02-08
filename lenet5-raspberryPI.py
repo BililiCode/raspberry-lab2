@@ -74,7 +74,9 @@ def train(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)
     print("training on ", device)
     loss = torch.nn.CrossEntropyLoss()
     for epoch in range(num_epochs):
+        # net.load_state_dict(torch.load('model_tensor.pth')) # use your trained model
         train_l_sum, train_acc_sum, n, batch_count, start = 0.0, 0.0, 0, 0, time.time()
+        
         for X, y in train_iter:
             X = X.to(device)
             y = y.to(device)
@@ -87,6 +89,8 @@ def train(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)
             train_acc_sum += (y_hat.argmax(dim=1) == y).sum().cpu().item()
             n += y.shape[0]
             batch_count += 1
+        # torch.save(net.state_dict(), 'model_tensor.pth') # save your trained model
+        
         test_acc = evaluate_accuracy(test_iter, net)
         print('epoch %d, loss %.4f, train acc %.3f, test acc %.3f, time %.1f sec'
               % (epoch + 1, train_l_sum / batch_count, train_acc_sum / n, test_acc, time.time() - start))
